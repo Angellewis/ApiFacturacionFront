@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 
-const url="https://localhost:44302/api/empresas/";
+const url="https://localhost:44304/api/clientes";
 
 class App extends Component {
 state={
@@ -17,8 +17,9 @@ state={
   form:{
     id: '',
     nombre: '',
-    pais: '',
-    capital_bursatil: '',
+    identificador: '',
+    cuenta: '',
+    estado: '',
     tipoModal: ''
   }
 }
@@ -59,14 +60,15 @@ modalInsertar=()=>{
   this.setState({modalInsertar: !this.state.modalInsertar});
 }
 
-seleccionarEmpresa=(empresa)=>{
+seleccionarCliente=(cliente)=>{
   this.setState({
     tipoModal: 'actualizar',
     form: {
-      id: empresa.id,
-      nombre: empresa.nombre,
-      pais: empresa.pais,
-      capital_bursatil: empresa.capital_bursatil
+      id: cliente.id,
+      nombre: cliente.nombre,
+      identificador: cliente.identificador,
+      cuenta: cliente.cuenta,
+      estado: cliente.estado
     }
   })
 }
@@ -92,30 +94,31 @@ console.log(this.state.form);
   return (
     <div className="App">
     <br /><br /><br />
-  <button className="btn btn-success" onClick={()=>{this.setState({form: null, tipoModal: 'insertar'}); this.modalInsertar()}}>Agregar Empresa</button>
+  <button className="btn btn-success" onClick={()=>{this.setState({form: null, tipoModal: 'insertar'}); this.modalInsertar()}}>Agregar Cliente</button>
   <br /><br />
     <table className="table ">
       <thead>
         <tr>
           <th>ID</th>
           <th>Nombre</th>
-          <th>País</th>
-          <th>Capital Bursatil (en millones de USD)</th>
-          <th>Acciones</th>
+          <th>Identificador</th>
+          <th>N.Cuenta</th>
+          <th>Estado</th>
         </tr>
       </thead>
       <tbody>
-        {this.state.data.map(empresa=>{
+        {this.state.data.map(cliente=>{
           return(
             <tr>
-          <td>{empresa.id}</td>
-          <td>{empresa.nombre}</td>
-          <td>{empresa.pais}</td>
-          <td>{new Intl.NumberFormat("en-EN").format(empresa.capital_bursatil)}</td>
+          <td>{cliente.id}</td>
+          <td>{cliente.nombre}</td>
+          <td>{cliente.identificador}</td>
+          <td>{cliente.cuenta}</td>
+          <td>{cliente.estado}</td>
           <td>
-                <button className="btn btn-primary" onClick={()=>{this.seleccionarEmpresa(empresa); this.modalInsertar()}}><FontAwesomeIcon icon={faEdit}/></button>
+                <button className="btn btn-primary" onClick={()=>{this.seleccionarCliente(cliente); this.modalInsertar()}}><FontAwesomeIcon icon={faEdit}/></button>
                 {"   "}
-                <button className="btn btn-danger" onClick={()=>{this.seleccionarEmpresa(empresa); this.setState({modalEliminar: true})}}><FontAwesomeIcon icon={faTrashAlt}/></button>
+                <button className="btn btn-danger" onClick={()=>{this.seleccionarCliente(cliente); this.setState({modalEliminar: true})}}><FontAwesomeIcon icon={faTrashAlt}/></button>
                 </td>
           </tr>
           )
@@ -137,11 +140,14 @@ console.log(this.state.form);
                     <label htmlFor="nombre">Nombre</label>
                     <input className="form-control" type="text" name="nombre" id="nombre" onChange={this.handleChange} value={form?form.nombre: ''}/>
                     <br />
-                    <label htmlFor="nombre">País</label>
-                    <input className="form-control" type="text" name="pais" id="pais" onChange={this.handleChange} value={form?form.pais: ''}/>
+                    <label htmlFor="nombre">Identificador</label>
+                    <input className="form-control" type="text" name="identificador" id="identificador" onChange={this.handleChange} value={form?form.identificador: ''}/>
                     <br />
-                    <label htmlFor="capital_bursatil">Capital Bursatil</label>
-                    <input className="form-control" type="text" name="capital_bursatil" id="capital_bursatil" onChange={this.handleChange} value={form?form.capital_bursatil:''}/>
+                    <label htmlFor="capital_bursatil">N.Cuenta</label>
+                    <input className="form-control" type="text" name="cuenta" id="cuenta" onChange={this.handleChange} value={form?form.cuenta:''}/>
+                    <br />
+                    <label htmlFor="capital_bursatil">Estado</label>
+                    <input className="form-control" type="text" name="estado" id="estado" onChange={this.handleChange} value={form?form.estado:''}/>
                   </div>
                 </ModalBody>
 
@@ -160,7 +166,7 @@ console.log(this.state.form);
 
           <Modal isOpen={this.state.modalEliminar}>
             <ModalBody>
-               Estás seguro que deseas eliminar a la empresa {form && form.nombre}
+               Estás seguro que deseas eliminar el cliente {form && form.nombre}
             </ModalBody>
             <ModalFooter>
               <button className="btn btn-danger" onClick={()=>this.peticionDelete()}>Sí</button>
