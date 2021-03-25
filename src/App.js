@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 
-const url="https://localhost:44304/api/clientes";
+const url="https://aff831d4cd50.ngrok.io/api/clientes";
 
 class App extends Component {
 state={
