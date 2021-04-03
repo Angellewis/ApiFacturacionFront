@@ -40,3 +40,7 @@
 .pointer{
   cursor: pointer;
 }
+
+.display-5 { 
+  font-size: 32px !important;
+}
