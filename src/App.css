@@ -44,3 +44,9 @@
 .display-5 { 
   font-size: 32px !important;
 }
+
+.center{
+  position: relative;
+  right: 300px;
+  margin-bottom: 10px;
+}

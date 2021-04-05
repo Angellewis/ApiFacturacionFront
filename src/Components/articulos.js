@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-// import 'C:/Users/elang/facturacion3/src/App.css';
+import 'C:/Users/elang/facturacion3/src/App.css';
 
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";

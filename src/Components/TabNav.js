@@ -1,7 +1,7 @@
 import React from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
-// import 'C:/Users/elang/facturacion3/src/App.css';
-import '/Volumes/Joel\'s External Drive/projects@/ApiFacturacionFront/src/App.css';
+import 'C:/Users/elang/facturacion3/src/App.css';
+//import '/Volumes/Joel\'s External Drive/projects@/ApiFacturacionFront/src/App.css';
 class TabNav extends React.Component {
   render() {
     return (

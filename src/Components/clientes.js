@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-// import 'C:/Users/elang/facturacion3/src/App.css';
-import "/Volumes/Joel's External Drive/projects@/ApiFacturacionFront/src/App.css";
+import 'C:/Users/elang/facturacion3/src/App.css';
+//import "/Volumes/Joel's External Drive/projects@/ApiFacturacionFront/src/App.css";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,7 +9,7 @@ import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 
-const url = "https://6f7c497b28aa.ngrok.io/api/clientes";
+const url = "https://localhost:44304/api/clientes";
 
 class App extends Component {
   state = {

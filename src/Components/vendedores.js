@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import '/Volumes/Joel\'s External Drive/projects@/ApiFacturacionFront/src/App.css';
+//import '/Volumes/Joel\'s External Drive/projects@/ApiFacturacionFront/src/App.css';
+import 'C:/Users/elang/facturacion3/src/App.css';
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -96,7 +97,9 @@ console.log(this.state.form);
   return (
     <div className="App">
     <br /><br /><br />
-  <button className="btn btn-success" onClick={()=>{this.setState({form: null, tipoModal: 'insertar'}); this.modalInsertar()}}>Agregar Vendedor</button>
+  <button className="btn btn-success" onClick={()=>{this.setState({form: null, tipoModal: 'insertar'}); this.modalInsertar()}}>
+    Agregar Vendedor
+    </button>
   <br /><br />
     <table className="table ">
       <thead>
