@@ -9,15 +9,17 @@ import {
   faPlus,
   faSmileBeam,
   faTrashAlt,
+  faInfoCircle,
   faWindowClose,
 } from "@fortawesome/free-solid-svg-icons";
-import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { Modal, ModalBody, ModalFooter, ModalHeader, InputGroup, Input, InputGroupAddon, InputGroupText } from "reactstrap";
 import Select from "react-select";
 
 const clientsEndPoint = "https://localhost:44304/api/clientes/";
 const sellersEndPoint = "https://localhost:44304/api/vendedores/";
 const articlesEndPoint = "https://localhost:44304/api/articulos/";
 const facturasEndPoint = "https://localhost:44304/api/facturas/";
+const detallesEndPoint = "https://localhost:44304/api/detalles/";
 
 
 class App extends Component {
@@ -26,16 +28,28 @@ class App extends Component {
     clientList: [],
     sellerList: [],
     facturasList: [],
+    facturaunit: [],
+    detallesunit: [],
+    newArticles: [],
     articlesListOptions: [],
     modalInsertar: false,
     modalEliminar: false,
+    modalDetalles: false,
     form: {
       id: "",
       clientID: "",
       sellerID: "",
       articlesList:[],
       tipoModal: "",
+      fecha: "",
+      comentario: "",
+      vendedor: "",
+      cliente: "",
+      total: ""
     },
+    formDetalle: {
+      id: ""
+    }
   };
 
   render() {
@@ -87,6 +101,15 @@ class App extends Component {
                   <td>{factura.cantidad}</td>
                   <td>{factura.total}</td>
                   <td>
+                  <button
+                      className="btn btn-primary"
+                      onClick={() => {
+                        this.seleccionarfactura(factura);
+                        this.setState({ modalDetalles: true });
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faInfoCircle} />
+                    </button>
                   <button
                       className="btn btn-danger"
                       onClick={() => {
@@ -159,23 +182,14 @@ class App extends Component {
                   <label className="label-control" label-for="vendedorId">
                     articulos
                   </label>
-                  {/*
-                  {
-                    this.this.state.form.articlesList.reduce( (acc, item) => 
-                    (acc[item.id] = (acc[item.id] || 0) + 1, acc), {})
-                    render() {
-                        return (<p>Hola</p>);
-                    }
-                  }
-              } 
-                  */}
                 </div>
                 <div className="offset-md-1 col-md-7">
                   <Select
-                    name="vendedorId"
-                    id="vendedorId"
-                    placeholder="Vendedor"
-                    options={this.state.sellerList}
+                    name="articleId"
+                    id="articleId"
+                    placeholder="Articulos"
+                    onChange= {this.handleArticleSelection}
+                    options={this.state.articlesListOptions}
                   />
                 </div>
               </div>
@@ -185,7 +199,85 @@ class App extends Component {
             </form>
           </ModalBody>
         </Modal>
-        {/* Edit Modal */}
+        {/* Details Modal */}
+        <Modal className="modal-lg" isOpen={this.state.modalDetalles}>
+          <ModalHeader style={{ display: "block" }}>
+            <div className="row">
+              <p className="col-sm-11">Detalle de la factura</p>
+            <button
+              className="btn btn-sm btn-danger col-sm-1"
+              style={{ float: "right" }}
+              onClick={() => this.setState({ modalDetalles: false })}>
+                <span>
+                <FontAwesomeIcon icon={faWindowClose} />
+                </span>
+          </button>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+          <div>
+          <InputGroup size="sm">
+        <InputGroupAddon addonType="prepend">
+          <InputGroupText>ID</InputGroupText>
+        </InputGroupAddon>
+        <Input value={form ? form.id : ""} disabled />
+      </InputGroup>
+      <InputGroup size="sm">
+        <InputGroupAddon addonType="prepend">
+          <InputGroupText>Fecha</InputGroupText>
+        </InputGroupAddon>
+        <Input value={form ? form.fecha : ""} disabled />
+      </InputGroup>
+      <InputGroup size="sm">
+        <InputGroupAddon addonType="prepend">
+          <InputGroupText>Comentario</InputGroupText>
+        </InputGroupAddon>
+        <Input value={form ? form.comentario : ""} disabled />
+      </InputGroup>
+      <InputGroup size="sm">
+        <InputGroupAddon addonType="prepend">
+          <InputGroupText>Vendedor</InputGroupText>
+        </InputGroupAddon>
+        <Input value={form ? form.vendedor : ""} disabled />
+      </InputGroup>
+      <InputGroup size="sm">
+        <InputGroupAddon addonType="prepend">
+          <InputGroupText>Cliente</InputGroupText>
+        </InputGroupAddon>
+        <Input value={form ? form.cliente : ""} disabled />
+      </InputGroup>
+      <InputGroup size="sm">
+        <InputGroupAddon addonType="prepend">
+          <InputGroupText color="Secondary">Total Facturado</InputGroupText>
+        </InputGroupAddon>
+        <Input value={form ? form.total : ""} disabled />
+      </InputGroup>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            {/*Articles by factura*/}
+            <table className="table ">
+          <thead>
+            <tr>
+              <th>Articulo</th>
+              <th>Precio</th>
+              <th>Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.detallesunit.map((detalle) => {
+              return (
+                <tr>
+                  <td>{detalle.articulo}</td>
+                  <td>{detalle.precio}</td>
+                  <td>{detalle.cantidad}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+          </ModalFooter>
+        </Modal>
         {/*Los usuarios no podran editar las facturas, solo eliminarlas y crearlas nuevamente para llevar un mejor control. */}
         {/* Delete Modal */}
         <Modal isOpen={this.state.modalEliminar}>
@@ -216,10 +308,19 @@ class App extends Component {
     this.setState({ modalInsertar: !this.state.modalInsertar });
   };
 
+  modalDetalles = () => {
+    this.setState({ modalDetalles: !this.state.modalDetalles });
+  };
+
     handleArticleSelection = (article) => {
-        let newArray = this.form.articlesList
-        newArray.push(article)
-        this.setState({ articlesList: newArray})
+      let newArray = this.state.form.articlesList
+      newArray.push(article.value)
+      this.printArticle();
+      this.setState({ articlesList: newArray}, this.printArticle);
+    }
+
+    printArticle = () => {
+      console.log(this.state.form.articlesList)
     }
 
     getClients = () => {
@@ -272,13 +373,30 @@ class App extends Component {
       });
   }
 
+  getDetalles = () => {
+    axios
+    .get(detallesEndPoint+this.state.form.id)
+    .then((response) => {
+      let options = response.data.map((detalles) => ({
+       id: detalles.id,
+       articulo: detalles.articulos.descripcion,
+       precio: detalles.articulos.precio,
+       cantidad: detalles.cant_articulo,
+      }));
+      this.setState({ detallesunit: options });
+  })
+    .catch((error) => {
+        console.log(error.message);
+    });
+}
+
     getArticles = () => {
         axios
         .get(articlesEndPoint)
         .then((response) => {
             let options = response.data.map((article) => ({
             value: article,
-            label: article.nombre,
+            label: article.descripcion,
             }));
             this.setState({ articlesListOptions: options });
         })
@@ -289,19 +407,35 @@ class App extends Component {
 
     peticionDelete = () => {
       axios.delete(facturasEndPoint + this.state.form.id).then((response) => {
-        this.setState({ modalEliminar: false });
+        this.setState({ modalEliminar: false }); 
         this.getFacturas();
       });
     };
 
     seleccionarfactura=(factura)=>{
       this.setState({
-        tipoModal: 'actualizar',
         form: {
           id: factura.id,
-        }
-      })
-    }
+          fecha: factura.fecha,
+          comentario: factura.comentario,
+          vendedor: factura.vendedor,
+          cliente: factura.cliente,
+          total: factura.total
+        },
+        formDetalle: {
+          id: factura.id
+        }, 
+      }, this.getDetalles);
+    };
+
+    loadArticleList = () => {
+     if (!this.state.form.articlesList) {
+        this.state.newArticles = Object.values(
+          this.state.form.articlesList.reduce( (acc, o) => 
+            (acc[o.id] = {...o, qty: ( acc[o.id] ? acc[o.id].qty : 0) + 1}, acc), {}
+          ))
+      }
+    };
 
     componentDidMount() {
         this.getClients();
