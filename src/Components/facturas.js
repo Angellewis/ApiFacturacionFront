@@ -372,7 +372,7 @@ class App extends Component {
       estado: article.estado
     }));
     //this.setState({article : article, article.cantidad: value.length, total: cantidad});
-    this.setState({ form: { cant_Articulos: value.length, precio_Total: cantidad, fecha: this.state.form.fecha } });
+    this.setState({ form: { ...this.state.form, cant_Articulos: value.length, precio_Total: cantidad, fecha: this.state.form.fecha } });
     this.setState({ formDetalle: { articuloid: article } });
     this.setState({ formArticulo: article2 });
   }
@@ -422,7 +422,6 @@ class App extends Component {
   }
 
   detailPost = async () => {
-    console.log(this.state.formDetalle);
     await axios
       .post(detallesEndPoint, this.state.formDetalle)
       .then((response) => {
@@ -437,8 +436,6 @@ class App extends Component {
     for (let x of this.state.formArticulo) {
       var ids = x.id;
       var article = this.state.formArticulo.find(art => art.id === ids);
-      console.log(ids);
-      console.log(article);
       //this.setState({ formArticulo: { ...this.state.formArticulo} }, this.articlesPut);
       axios.put(articlesEndPoint + ids, article).then((response) => {
         this.getFacturas();
