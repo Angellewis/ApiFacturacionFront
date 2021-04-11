@@ -65,6 +65,7 @@ class App extends Component {
 
   modalInsertar = () => {
     this.setState({ modalInsertar: !this.state.modalInsertar });
+    console.log(this.state.form.estado);
   };
 
   seleccionararticulo = (articulo) => {
@@ -126,7 +127,7 @@ class App extends Component {
           <tbody>
             {this.state.data.map((articulo) => {
               return (
-                <tr>
+                <tr key={articulo.id}>
                   <td>{articulo.id}</td>
                   <td>{articulo.descripcion}</td>
                   <td>{articulo.precio}</td>

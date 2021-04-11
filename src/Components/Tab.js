@@ -5,7 +5,7 @@ class Tab extends React.Component {
     if (this.props.isSelected) {
       return (
         <div>
-          { this.props.children }
+          { this.props.children}
         </div>
       );
     }

@@ -51,11 +51,18 @@ class App extends Component {
       facturaid: "",
       articuloid: [],
       cant_articulo: ""
+    },
+    formArticulo: {
+      id: "",
+      descripcion: "",
+      precio: "",
+      stock: "",
+      estado: "",
     }
   };
 
   render() {
-    const { form, formDetalle } = this.state;
+    const { form, formDetalle, formArticulo } = this.state;
     return (
       <div className="App container">
         <h2 className="display-2 bold">Seccion de facturación</h2>
@@ -95,7 +102,7 @@ class App extends Component {
           <tbody>
             {this.state.facturasList.map((factura) => {
               return (
-                <tr>
+                <tr key={factura.id}>
                   <td>{factura.id}</td>
                   <td>{factura.fecha}</td>
                   <td>{factura.comentario}</td>
@@ -309,7 +316,7 @@ class App extends Component {
               <tbody>
                 {this.state.detallesunit.map((detalle) => {
                   return (
-                    <tr>
+                    <tr key={detalle.id}>
                       <td>{detalle.articulo}</td>
                       <td>{detalle.precio}</td>
                       <td>{detalle.cantidad}</td>
@@ -357,9 +364,17 @@ class App extends Component {
   handleArticleSelection = (value) => {
     var cantidad = value.map((value) => value.precio).reduce((a, b) => a + b, 0);
     var article = value.map((article) => article.value);
+    var article2 = value.map((article) => ({
+      id: article.value,
+      descripcion: article.descripcion,
+      precio: article.precio,
+      stock: article.stock - 1,
+      estado: article.estado
+    }));
     //this.setState({article : article, article.cantidad: value.length, total: cantidad});
     this.setState({ form: { cant_Articulos: value.length, precio_Total: cantidad, fecha: this.state.form.fecha } });
     this.setState({ formDetalle: { articuloid: article } });
+    this.setState({ formArticulo: article2 });
   }
 
   getOptionLabel = (option) => option.nombre;
@@ -392,6 +407,7 @@ class App extends Component {
         this.setState({ formDetalle: { ...this.state.formDetalle, facturaid: response.data.id, cant_articulo: 1 } });
         this.postDetalle();
         this.getFacturas();
+        this.modalInsertar();
       })
       .catch((error) => {
         console.log(error.message);
@@ -402,19 +418,43 @@ class App extends Component {
     for (let x of this.state.formDetalle.articuloid) {
       this.setState({ formDetalle: { ...this.state.formDetalle, articuloid: x } }, this.detailPost);
     }
+    this.articleidPut();
   }
 
   detailPost = async () => {
+    console.log(this.state.formDetalle);
     await axios
       .post(detallesEndPoint, this.state.formDetalle)
       .then((response) => {
         this.getFacturas();
-        this.modalInsertar();
       })
       .catch((error) => {
         console.log(error.message);
       });
   }
+
+  articleidPut = () => {
+    for (let x of this.state.formArticulo) {
+      var ids = x.id;
+      var article = this.state.formArticulo.find(art => art.id === ids);
+      console.log(ids);
+      console.log(article);
+      //this.setState({ formArticulo: { ...this.state.formArticulo} }, this.articlesPut);
+      axios.put(articlesEndPoint + ids, article).then((response) => {
+        this.getFacturas();
+      });
+    }
+  };
+  /*
+   articlesPut = () => {
+    Object.entries(this.state.formArticulo).map(item => {
+      console.log(item)
+    })
+    axios.put(articlesEndPoint + id, objeto).then((response) => {
+      this.getFacturas();
+    }); 
+  } */
+
 
   getClients = () => {
     axios
