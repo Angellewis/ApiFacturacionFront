@@ -37,23 +37,22 @@ class App extends Component {
     modalDetalles: false,
     form: {
       id: "",
-      clientID: "",
-      sellerID: "",
-      articlesList:[],
+      clienteid: [],
+      vendedorid: [],
       tipoModal: "",
       fecha: "",
       comentario: "",
-      vendedor: "",
-      cliente: "",
-      total: ""
+      precio_Total: "",
+      cant_Articulos: ""
     },
     formDetalle: {
-      id: ""
+      id: "",
+      farticlesList: [],
     }
   };
 
   render() {
-    const {form}=this.state;
+    const {form, formDetalle}=this.state;
     return (
       <div className="App container">
         <h2 className="display-2 bold">Seccion de facturación</h2>
@@ -63,7 +62,8 @@ class App extends Component {
             <button
               className="btn btn-success center"
               onClick={() => {
-                this.setState({ form: null, tipoModal: "insertar" });
+                this.setState({ form: {tipoModal: "insertar"} });
+                this.getCurrentDate('/');
                 this.modalInsertar();
               }}
             >
@@ -98,8 +98,8 @@ class App extends Component {
                   <td>{factura.comentario}</td>
                   <td>{factura.vendedor}</td>
                   <td>{factura.cliente}</td>
-                  <td>{factura.cantidad}</td>
-                  <td>{factura.total}</td>
+                  <td>{factura.cant_Articulos}</td>
+                  <td>{factura.precio_Total}</td> 
                   <td>
                   <button
                       className="btn btn-primary"
@@ -147,6 +147,20 @@ class App extends Component {
           </ModalHeader>
           <ModalBody style={{ display: "block" }}>
             <form>
+            <div className="contianer row form-group">
+            <InputGroup>
+        <InputGroupAddon addonType="prepend">
+          <InputGroupText>Fecha</InputGroupText>
+        </InputGroupAddon>
+        <Input value={this.state.form.fecha} className="form-control" disabled/>
+      </InputGroup>
+      <InputGroup>
+        <InputGroupAddon addonType="prepend">
+          <InputGroupText>Comentario</InputGroupText>
+        </InputGroupAddon>
+        <Input className="form-control" value={this.state.form.comentario} onChange={this.onChangeGeneral}/>
+      </InputGroup>
+              </div>
               <div className="contianer row form-group">
                 <div className="offset-md-1 col-md-2">
                   <label className="label-control" label-for="clientId">
@@ -157,8 +171,10 @@ class App extends Component {
                   <Select
                     name="clientId"
                     id="clientId"
-                    placeholder="Clientes"
+                    placeholder="Cliente"
+                    getOptionLabel={this.getOptionLabel}
                     options={this.state.clientList}
+                    onChange={this.handleClientSelection}
                   />
                 </div>
               </div>
@@ -174,17 +190,20 @@ class App extends Component {
                     id="vendedorId"
                     placeholder="Vendedor"
                     options={this.state.sellerList}
+                    getOptionLabel={this.getOptionLabel}
+                    onChange={this.handleSellerSelection}
                   />
                 </div>
               </div>
               <div className="contianer row form-group">
                 <div className="offset-md-1 col-md-2">
-                  <label className="label-control" label-for="vendedorId">
+                  <label className="label-control" label-for="articleId">
                     articulos
                   </label>
                 </div>
                 <div className="offset-md-1 col-md-7">
                   <Select
+                    isMulti
                     name="articleId"
                     id="articleId"
                     placeholder="Articulos"
@@ -196,8 +215,28 @@ class App extends Component {
               <hr></hr>
               <h3 className="display-5"> articulos</h3>
               <hr></hr>
+              <InputGroup>
+        <InputGroupAddon addonType="prepend">
+          <InputGroupText>Cantidad de articulos</InputGroupText>
+        </InputGroupAddon>
+        <Input className="form-control" value={this.state.form.cant_Articulos} disabled/>
+      </InputGroup>
+      <InputGroup>
+        <InputGroupAddon addonType="prepend">
+          <InputGroupText>Total</InputGroupText>
+        </InputGroupAddon>
+        <Input className="form-control" value={this.state.form.precio_Total} disabled/>
+      </InputGroup>
             </form>
           </ModalBody>
+          <ModalFooter>
+          <button
+              className="btn btn-success"
+              onClick={this.postFactura}
+            >
+              Facturar
+            </button>
+          </ModalFooter>
         </Modal>
         {/* Details Modal */}
         <Modal className="modal-lg" isOpen={this.state.modalDetalles}>
@@ -250,7 +289,7 @@ class App extends Component {
         <InputGroupAddon addonType="prepend">
           <InputGroupText color="Secondary">Total Facturado</InputGroupText>
         </InputGroupAddon>
-        <Input value={form ? form.total : ""} disabled />
+        <Input value={form ? form.precio_Total : ""} disabled />
       </InputGroup>
             </div>
           </ModalBody>
@@ -312,15 +351,48 @@ class App extends Component {
     this.setState({ modalDetalles: !this.state.modalDetalles });
   };
 
-    handleArticleSelection = (article) => {
-      let newArray = this.state.form.articlesList
-      newArray.push(article.value)
-      this.printArticle();
-      this.setState({ articlesList: newArray}, this.printArticle);
+    handleArticleSelection = (value) => {
+      var cantidad = value.map((value) => value.precio).reduce((a, b) => a + b, 0);
+      //this.setState({article : article, article.cantidad: value.length, total: cantidad});
+      this.setState({ form: {cant_Articulos: value.length,precio_Total: cantidad, fecha: this.state.form.fecha}});
+      this.setState({formDetalle: {farticlesList: value}});
     }
 
-    printArticle = () => {
-      console.log(this.state.form.articlesList)
+    getOptionLabel = (option) => option.nombre;
+    
+    handleClientSelection = (value) => {
+      var client = this.state.form;
+      var modifiedValue = value.id;
+      client.clienteid = modifiedValue;
+      this.setState({ client: client});
+    }
+
+    handleSellerSelection = (value) => {
+      var seller = this.state.form;
+      var modifiedValue = value.id;
+      seller.vendedorid = modifiedValue;
+      this.setState({ seller: seller});
+    }
+
+    onChangeGeneral = (value) => {
+      var comment = this.state.form;
+      var modifiedValue = value.target.value;
+      comment.comentario = modifiedValue;
+      this.setState({ comment: comment});
+    }
+
+    postFactura = async () => {
+      await axios
+      .post(facturasEndPoint, this.state.form)
+      .then((response) => {
+        console.log(response.data.id);
+        this.getFacturas();
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+    console.log(this.state.form);
+    console.log(this.state.formDetalle);
     }
 
     getClients = () => {
@@ -328,8 +400,11 @@ class App extends Component {
         .get(clientsEndPoint)
         .then((response) => {
             let options = response.data.map((client) => ({
-            value: client.id,
-            label: client.nombre,
+            id: client.id,
+            nombre: client.nombre,
+            identificador: client.identificador,
+            cuenta: client.cuenta,
+            estado: client.estado,
             }));
             this.setState({ clientList: options });
         })
@@ -343,8 +418,11 @@ class App extends Component {
         .get(sellersEndPoint)
         .then((response) => {
             let options = response.data.map((seller) => ({
-            value: seller.id,
-            label: seller.nombre,
+            id: seller.id,
+            nombre: seller.nombre,
+            cedula: seller.cedula,
+            comision: seller.comision,
+            estado: seller.estado,
             }));
             this.setState({ sellerList: options });
         })
@@ -363,8 +441,8 @@ class App extends Component {
          comentario: factura.comentario,
          vendedor: factura.vendedores.nombre,
          cliente: factura.clientes.nombre,
-         cantidad: factura.cant_Articulos,
-         total: factura.precio_Total
+         cant_Articulos: factura.cant_Articulos,
+         precio_Total: factura.precio_Total
         }));
         this.setState({ facturasList: options });
     })
@@ -395,7 +473,11 @@ class App extends Component {
         .get(articlesEndPoint)
         .then((response) => {
             let options = response.data.map((article) => ({
-            value: article,
+            value: article.id,
+            descripcion: article.descripcion,
+            precio: article.precio,
+            stock: article.stock,
+            estado: article.estado,
             label: article.descripcion,
             }));
             this.setState({ articlesListOptions: options });
@@ -420,7 +502,7 @@ class App extends Component {
           comentario: factura.comentario,
           vendedor: factura.vendedor,
           cliente: factura.cliente,
-          total: factura.total
+          precio_Total: factura.precio_Total
         },
         formDetalle: {
           id: factura.id
@@ -436,6 +518,16 @@ class App extends Component {
           ))
       }
     };
+
+    getCurrentDate = (separator='') => {
+
+      let newDate = new Date()
+      let date = newDate.getDate();
+      let month = newDate.getMonth() + 1;
+      let year = newDate.getFullYear();
+      let fecha = `${month<10?`0${month}`:`${month}`}${separator}${date}${separator}${year}`;
+      this.setState({form: {fecha: fecha}});
+      }
 
     componentDidMount() {
         this.getClients();
