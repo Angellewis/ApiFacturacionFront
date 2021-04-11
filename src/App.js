@@ -7,6 +7,7 @@ import Clientes from './Components/clientes';
 import Articulos from './Components/articulos';
 import Vendedores from './Components/vendedores';
 import Facturas from './Components/facturas';
+import Asientos from './Components/AsientoContable';
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -20,7 +21,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App mt-4">
-        <TabNav tabs={['Articulos', 'Clientes', 'Vendedores', 'Facturas']} selected={ this.state.selected } setSelected={ this.setSelected }>
+        <TabNav tabs={['Articulos', 'Clientes', 'Vendedores', 'Facturas', 'Asientos']} selected={ this.state.selected } setSelected={ this.setSelected }>
           <Tab isSelected={ this.state.selected === 'Articulos' }>
             <Articulos />
           </Tab>
@@ -32,6 +33,9 @@ class App extends React.Component {
           </Tab>
           <Tab isSelected={this.state.selected === 'Facturas'}>
             <Facturas />
+          </Tab>
+          <Tab isSelected={this.state.selected === 'Asientos'}>
+            <Asientos />
           </Tab>
         </TabNav>
       </div>
