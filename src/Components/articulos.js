@@ -7,7 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
-const url = "https://localhost:44304/api/articulos/";
+const BaseUrl = "https://localhost:44304/api/";
+const url = BaseUrl + "articulos/";
 
 class App extends Component {
   state = {

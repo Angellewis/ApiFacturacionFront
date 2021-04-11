@@ -9,7 +9,8 @@ import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 
-const url = "https://localhost:44304/api/clientes/";
+const BaseUrl = "https://localhost:44304/api/";
+const url = BaseUrl + "clientes/";
 
 class App extends Component {
   state = {
