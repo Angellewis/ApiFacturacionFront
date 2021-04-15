@@ -18,7 +18,7 @@ class App extends Component {
     data: [],
     asientos: [],
     form: {
-      idAuxiliarSystem: 12,
+      idAuxiliarSystem: 3,
       description: "Asiento de facturacion correspondiente al periodo 2021-04",
       account: "13",
       movementType: "DB",
@@ -136,7 +136,6 @@ class App extends Component {
               <th>Descripcion</th>
               <th>Fecha</th>
               <th>Monto</th>
-              <th>Id.Asiento</th>
               <th></th>
             </tr>
           </thead>
