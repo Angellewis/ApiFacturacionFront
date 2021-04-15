@@ -130,7 +130,9 @@ class App extends Component {
     const { form } = this.state;
     return (
       <div className="App">
-        <br /><br /><br />
+        <h2 className="display-2 bold">Seccion de vendedores</h2>
+        <hr></hr>
+        <br />
         <button className="btn btn-success" onClick={() => { this.setState({ form: null, tipoModal: 'insertar' }); this.modalInsertar() }}>
           Agregar Vendedor
     </button>

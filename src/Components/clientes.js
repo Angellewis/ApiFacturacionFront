@@ -135,8 +135,8 @@ class App extends Component {
     const { form } = this.state;
     return (
       <div className="App">
-        <br />
-        <br />
+        <h2 className="display-2 bold">Seccion de clientes</h2>
+        <hr></hr>
         <br />
         <button
           className="btn btn-success"

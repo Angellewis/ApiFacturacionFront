@@ -67,6 +67,7 @@ class App extends Component {
       <div className="App container">
         <h2 className="display-2 bold">Seccion de facturación</h2>
         <hr></hr>
+        <br />
         <div className="row">
           <div className="offset-md-8 col-md-2">
             <button
